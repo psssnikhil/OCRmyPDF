@@ -28,4 +28,5 @@ stages:
               qpdf --version
           - pwsh: |
               refreshenv
+              $env:path = "C:\Program Files\Tesseract-OCR;" + $env:path
               pytest -n auto
