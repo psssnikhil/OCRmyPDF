@@ -14,16 +14,15 @@ stages:
         steps:
           - task: UsePythonVersion@0
           - script: |
-              choco install --yes --limit-output --pre tesseract
-              choco install --yes --limit-output python3
-              choco install --yes --limit-output ghostscript
-              choco install --yes --limit-output qpdf
-              choco install --yes --limit-output pngquant
+              choco install --yes --no-progress --pre tesseract
+              choco install --yes --no-progress python3
+              choco install --yes --no-progress ghostscript
+              choco install --yes --no-progress qpdf
+              choco install --yes --no-progress pngquant
           - script: |
               pip install --upgrade pip wheel
               pip install -r requirements/main.txt -r requirements/test.txt .
               tesseract --version
               qpdf --version
-          - powershell: |
-              $env:path = "C:\Program Files\Tesseract"
+          - script: |
               pytest -n auto
