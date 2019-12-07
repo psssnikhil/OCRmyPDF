@@ -130,9 +130,6 @@ def spoof(tmp_path_factory, **kwargs):
                 (tmpdir / f'{prog}.py').write_text(py_file, encoding='utf-8')
 
     env['_OCRMYPDF_TEST_PATH'] = str(tmpdir) + os.pathsep + env['PATH']
-    if os.name == 'nt':
-        if '.py' not in env['PATHEXT'].lower():
-            raise EnvironmentError("PATHEXT is not configured to support .py")
     return env
 
 
