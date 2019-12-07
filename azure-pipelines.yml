@@ -42,6 +42,7 @@ stages:
           - pwsh: |
               refreshenv
               $env:path = "C:\Program Files\Tesseract-OCR;C:\Program Files\gs\gs9.50\bin;" + $env:path
+              $env:pathext += ';.py'
               pytest -n auto
       - job: Linux
         pool:
