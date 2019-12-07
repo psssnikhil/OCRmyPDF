@@ -44,7 +44,7 @@ stages:
               $env:path = "C:\Program Files\Tesseract-OCR;C:\Program Files\gs\gs9.50\bin;" + $env:path
               $env:pathext += ';.py'
               pytest -n auto
-      - job: "Ubuntu 1804"
+      - job: "Ubuntu_1804"
         pool:
           vmImage: "ubuntu-18.04"
         strategy:
