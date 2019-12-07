@@ -11,10 +11,21 @@ trigger:
 stages:
   - stage: "Test"
     jobs:
-      - job: windows64
-        pool: { vmImage: "vs2017-win2016" }
+      - job: Windows
+        pool:
+          vmImage: "vs2017-win2016"
+        strategy:
+          matrix:
+            Python36:
+              python.version: "3.6"
+            Python37:
+              python.version: "3.7"
+            Python38:
+              python.version: "3.8"
         steps:
           - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "$(python.version)"
           - pwsh: |
               choco install --yes --no-progress --pre tesseract
               choco install --yes --no-progress python3
@@ -31,4 +42,46 @@ stages:
           - pwsh: |
               refreshenv
               $env:path = "C:\Program Files\Tesseract-OCR;C:\Program Files\gs\gs9.50\bin;" + $env:path
+              pytest -n auto
+      - job: Linux
+        pool:
+          vmImage: "ubuntu18.04"
+        strategy:
+          matrix:
+            Python36:
+              python.version: "3.6"
+            Python37:
+              python.version: "3.7"
+            Python38:
+              python.version: "3.8"
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "$(python.version)"
+          - bash: |
+              apt-get update && apt-get install -y --no-install-recommends \
+                python3-software-properties \
+                curl \
+                ghostscript \
+                img2pdf \
+                libexempi3 \
+                libffi-dev \
+                liblept5 \
+                libsm6 libxext6 libxrender-dev \
+                pngquant \
+                popper-utils
+                python3 \
+                qpdf \
+                tesseract-ocr \
+                tesseract-ocr-deu \
+                tesseract-ocr-eng \
+                unpaper \
+                zlib1g
+          - bash: |
+              curl https://bootstrap.pypa.io/get-pip.py | python3
+              pip3 install -r requirements/main.txt -r requirements/test.txt .
+          - bash: |
+              tesseract --version
+              qpdf --version
+          - bash: |
               pytest -n auto
