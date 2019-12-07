@@ -20,6 +20,7 @@ stages:
               choco install --yes --no-progress qpdf
               choco install --yes --no-progress pngquant
           - script: |
+              refreshenv
               pip install --upgrade pip wheel
               pip install -r requirements/main.txt -r requirements/test.txt .
               tesseract --version
