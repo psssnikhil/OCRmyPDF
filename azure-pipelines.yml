@@ -21,6 +21,7 @@ stages:
               choco install --yes --no-progress pngquant
           - pwsh: |
               refreshenv
+              $env:path = "C:\Program Files\Tesseract-OCR;" + $env:path
               pip install --upgrade pip wheel
               pip install -r requirements/main.txt -r requirements/test.txt .
               tesseract --version
