@@ -5,6 +5,8 @@ trigger:
   branches:
     include:
       - "*"
+    exclude:
+      - "travis"
 
 stages:
   - stage: "Test"
@@ -21,12 +23,12 @@ stages:
               choco install --yes --no-progress pngquant
           - pwsh: |
               refreshenv
-              $env:path = "C:\Program Files\Tesseract-OCR;" + $env:path
+              $env:path = "C:\Program Files\Tesseract-OCR;C:\Program Files\gs\gs9.50\bin;" + $env:path
               pip install --upgrade pip wheel
               pip install -r requirements/main.txt -r requirements/test.txt .
               tesseract --version
               qpdf --version
           - pwsh: |
               refreshenv
-              $env:path = "C:\Program Files\Tesseract-OCR;" + $env:path
+              $env:path = "C:\Program Files\Tesseract-OCR;C:\Program Files\gs\gs9.50\bin;" + $env:path
               pytest -n auto
