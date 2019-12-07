@@ -13,17 +13,16 @@ stages:
         pool: { vmImage: "vs2017-win2016" }
         steps:
           - task: UsePythonVersion@0
-          - script: |
+          - pwsh: |
               choco install --yes --no-progress --pre tesseract
               choco install --yes --no-progress python3
               choco install --yes --no-progress ghostscript
               choco install --yes --no-progress qpdf
               choco install --yes --no-progress pngquant
-          - script: |
-              refreshenv
+          - pwsh: |
               pip install --upgrade pip wheel
               pip install -r requirements/main.txt -r requirements/test.txt .
               tesseract --version
               qpdf --version
-          - script: |
+          - pwsh: |
               pytest -n auto
