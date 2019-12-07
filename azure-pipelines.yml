@@ -1,0 +1,28 @@
+trigger:
+  tags:
+    include:
+      - v*
+  branches:
+    include:
+      - "*"
+
+stages:
+  - stage: "Test"
+    jobs:
+      - job: windows64
+        pool: { vmImage: "vs2017-win2016" }
+        steps:
+          - task: UsePythonVersion@0
+          - script: |
+              choco install python3
+              choco install tesseract
+              choco install ghostscript
+              choco install qpdf
+              choco install pngquant
+          - script: |
+              pip install --upgrade pip wheel
+              pip install -r requirements/main.txt -r requirements/test.txt .
+              tesseract --version
+              qpdf --version
+          - script: |
+              pytest -n auto
