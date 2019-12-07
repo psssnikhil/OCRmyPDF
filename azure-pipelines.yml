@@ -71,7 +71,7 @@ stages:
                 liblept5 \
                 libsm6 libxext6 libxrender-dev \
                 pngquant \
-                popper-utils \
+                poppler-utils \
                 python3 \
                 qpdf \
                 tesseract-ocr \
