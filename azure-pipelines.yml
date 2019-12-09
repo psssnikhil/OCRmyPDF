@@ -85,7 +85,6 @@ stages:
                 libsm6 libxext6 libxrender-dev \
                 pngquant \
                 poppler-utils \
-                python3 \
                 qpdf \
                 tesseract-ocr \
                 tesseract-ocr-deu \
@@ -121,10 +120,6 @@ stages:
           matrix:
             Python36:
               python.version: "3.6"
-            Python37:
-              python.version: "3.7"
-            Python38:
-              python.version: "3.8"
         steps:
           - task: UsePythonVersion@0
             inputs:
@@ -177,8 +172,6 @@ stages:
           vmImage: "macos-10.14"
         strategy:
           matrix:
-            Python36:
-              python.version: "3.6"
             Python37:
               python.version: "3.7"
             Python38:
@@ -219,3 +212,42 @@ stages:
             inputs:
               codeCoverageTool: Cobertura
               summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.xml"
+  - stage: "Deploy"
+    jobs:
+      - deployment: "PyPI"
+        pool:
+          vmImage: "ubuntu-18.04"
+        environment: "deploy"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: UsePythonVersion@0
+                  inputs:
+                    versionSpec: "3.8"
+                    architecture: x64
+                - download: current
+                - script: |
+                    pip3 install --upgrade pip wheel twine
+                    python setup.py sdist bdist_wheel
+                  displayName: "Generate artifacts"
+                - script: |
+                    cat <<FILE >.pypirc
+                    [distutils]
+                    index-servers =
+                        pypi
+
+                    [pypi]
+                    username: __token__
+                    password: $(TOKEN_PYPI)
+
+                    FILE
+                  displayName: "Generate PyPI auth file"
+                - script: |
+                    python -m twine upload --config-file .pypirc dist/*
+                  displayName: "Upload to PyPI"
+                  condition: always() # and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+                - script: |
+                    curl -X POST -d "token=$(TOKEN_RTD)" https://readthedocs.org/api/v2/webhook/pikepdf/39557/
+                  displayName: "Trigger ReadTheDocs"
+                  condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master')))
