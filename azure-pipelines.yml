@@ -172,7 +172,7 @@ stages:
             inputs:
               codeCoverageTool: Cobertura
               summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.xml"
-      - job: "macOS Mojave"
+      - job: "macOS_Mojave"
         pool:
           vmImage: "macos-10.14"
         strategy:
