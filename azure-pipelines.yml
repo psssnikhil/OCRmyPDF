@@ -212,6 +212,22 @@ stages:
             inputs:
               codeCoverageTool: Cobertura
               summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.xml"
+
+  - stage: "Artifacts"
+    jobs:
+      - job: "sdist_wheel"
+        pool:
+          vmImage: "ubuntu-18.04"
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+          - bash: |
+              pip3 install --upgrade pip wheel
+              python setup.py sdist wheel
+          - publish: dist
+            artifact: sdist_wheel
+
   - stage: "Deploy"
     jobs:
       - deployment: "PyPI"
@@ -222,6 +238,11 @@ stages:
           runOnce:
             deploy:
               steps:
+                - download: current
+                  artifact: sdist_wheel
+                - script: |
+                    mkdir -p dist
+                    mv $(Pipeline.Workspace)/sdist_wheel/* dist
                 - task: UsePythonVersion@0
                   inputs:
                     versionSpec: "3.8"
