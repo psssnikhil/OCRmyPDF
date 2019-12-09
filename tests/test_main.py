@@ -21,6 +21,7 @@ import shutil
 from math import isclose
 from pathlib import Path
 from subprocess import PIPE, run
+from unittest.mock import patch
 
 import PIL
 import pytest
@@ -858,17 +859,18 @@ def test_decompression_bomb(resources, outpdf):
 
 
 def test_text_curves(spoof_tesseract_noop, resources, outpdf):
-    check_ocrmypdf(resources / 'vector.pdf', outpdf, env=spoof_tesseract_noop)
+    with patch('ocrmypdf._pipeline.VECTOR_PAGE_DPI', 100):
+        check_ocrmypdf(resources / 'vector.pdf', outpdf, env=spoof_tesseract_noop)
 
-    info = PdfInfo(outpdf)
-    assert len(info.pages[0].images) == 0, "added images to the vector PDF"
+        info = PdfInfo(outpdf)
+        assert len(info.pages[0].images) == 0, "added images to the vector PDF"
 
-    check_ocrmypdf(
-        resources / 'vector.pdf', outpdf, '--force-ocr', env=spoof_tesseract_noop
-    )
+        check_ocrmypdf(
+            resources / 'vector.pdf', outpdf, '--force-ocr', env=spoof_tesseract_noop
+        )
 
-    info = PdfInfo(outpdf)
-    assert len(info.pages[0].images) != 0, "force did not rasterize"
+        info = PdfInfo(outpdf)
+        assert len(info.pages[0].images) != 0, "force did not rasterize"
 
 
 def test_output_is_dir(spoof_tesseract_noop, resources, outdir):
