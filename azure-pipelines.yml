@@ -223,7 +223,7 @@ stages:
             inputs:
               versionSpec: "3.7"
           - bash: |
-              pip3 install --upgrade pip wheel
+              python -m pip install --upgrade pip wheel
               python setup.py sdist wheel
           - publish: dist
             artifact: sdist_wheel
