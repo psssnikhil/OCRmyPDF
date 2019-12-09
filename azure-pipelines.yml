@@ -11,111 +11,109 @@ trigger:
 stages:
   - stage: "Test"
     jobs:
-      # - job: Windows
-      #   pool:
-      #     vmImage: "vs2017-win2016"
-      #   strategy:
-      #     matrix:
-      #       Python36:
-      #         python.version: "3.6"
-      #       Python37:
-      #         python.version: "3.7"
-      #       Python38:
-      #         python.version: "3.8"
-      #   steps:
-      #     - task: UsePythonVersion@0
-      #       inputs:
-      #         versionSpec: "$(python.version)"
-      #     - pwsh: |
-      #         choco install --yes --no-progress --pre tesseract
-      #         choco install --yes --no-progress python3
-      #         choco install --yes --no-progress ghostscript
-      #         choco install --yes --no-progress qpdf
-      #         choco install --yes --no-progress pngquant
-      #       displayName: "Install system packages"
-      #     - pwsh: |
-      #         refreshenv
-      #         $env:path = "C:\Program Files\Tesseract-OCR;C:\Program Files\gs\gs9.50\bin;" + $env:path
-      #         pip install --upgrade pip wheel
-      #         pip install -r requirements/main.txt -r requirements/test.txt .
-      #         tesseract --version
-      #         qpdf --version
-      #       displayName: "Install Python packages"
-      #     - pwsh: |
-      #         refreshenv
-      #         $env:path = "C:\Program Files\Tesseract-OCR;C:\Program Files\gs\gs9.50\bin;" + $env:path
-      #         $env:pathext += ';.py'
-      #         # -n auto helps Windows
-      #         pytest -n auto --junitxml=test.xml --cov=ocrmypdf --cov-report=xml
-      #       displayName: "Test"
-      #     - task: PublishTestResults@2
-      #       inputs:
-      #         testResultsFiles: "test.xml"
-      #         testRunTitle: "$(Agent.OS) - $(Build.DefinitionName) - Python $(python.version)"
-      #       condition: succeededOrFailed()
-      #     - task: PublishCodeCoverageResults@1
-      #       inputs:
-      #         codeCoverageTool: Cobertura
-      #         summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.xml"
-      #         reportDirectory: "$(System.DefaultWorkingDirectory)/**/htmlcov"
-      # - job: "Ubuntu_1804"
-      #   pool:
-      #     vmImage: "ubuntu-18.04"
-      #   strategy:
-      #     matrix:
-      #       Python36:
-      #         python.version: "3.6"
-      #       Python37:
-      #         python.version: "3.7"
-      #       Python38:
-      #         python.version: "3.8"
-      #   steps:
-      #     - task: UsePythonVersion@0
-      #       inputs:
-      #         versionSpec: "$(python.version)"
-      #     - bash: |
-      #         sudo apt-get update
-      #         sudo apt-get install -y --no-install-recommends \
-      #           python3-software-properties \
-      #           curl \
-      #           ghostscript \
-      #           img2pdf \
-      #           libexempi3 \
-      #           libffi-dev \
-      #           liblept5 \
-      #           libsm6 libxext6 libxrender-dev \
-      #           pngquant \
-      #           poppler-utils \
-      #           python3 \
-      #           qpdf \
-      #           tesseract-ocr \
-      #           tesseract-ocr-deu \
-      #           tesseract-ocr-eng \
-      #           unpaper \
-      #           zlib1g
-      #       displayName: "Install system packages"
-      #     - bash: |
-      #         curl https://bootstrap.pypa.io/get-pip.py | python3
-      #         pip3 install -r requirements/main.txt -r requirements/test.txt .
-      #       displayName: "Install Python packages"
-      #     - bash: |
-      #         tesseract --version
-      #         qpdf --version
-      #       displayName: "Record versions"
-      #     - bash: |
-      #         # -n auto is slower on Linux and breaks on Python 3.8
-      #         pytest -n0 --junitxml=test.xml --cov=ocrmypdf --cov-report=xml
-      #       displayName: "Test"
-      #     - task: PublishTestResults@2
-      #       inputs:
-      #         testResultsFiles: "test.xml"
-      #         testRunTitle: "$(Agent.OS) - $(Build.DefinitionName) - Python $(python.version)"
-      #       condition: succeededOrFailed()
-      #     - task: PublishCodeCoverageResults@1
-      #       inputs:
-      #         codeCoverageTool: Cobertura
-      #         summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.xml"
-      #         reportDirectory: "$(System.DefaultWorkingDirectory)/**/htmlcov"
+      - job: Windows
+        pool:
+          vmImage: "vs2017-win2016"
+        strategy:
+          matrix:
+            Python36:
+              python.version: "3.6"
+            Python37:
+              python.version: "3.7"
+            Python38:
+              python.version: "3.8"
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "$(python.version)"
+          - pwsh: |
+              choco install --yes --no-progress --pre tesseract
+              choco install --yes --no-progress python3
+              choco install --yes --no-progress ghostscript
+              choco install --yes --no-progress qpdf
+              choco install --yes --no-progress pngquant
+            displayName: "Install system packages"
+          - pwsh: |
+              refreshenv
+              $env:path = "C:\Program Files\Tesseract-OCR;C:\Program Files\gs\gs9.50\bin;" + $env:path
+              pip install --upgrade pip wheel
+              pip install -r requirements/main.txt -r requirements/test.txt .
+              tesseract --version
+              qpdf --version
+            displayName: "Install Python packages"
+          - pwsh: |
+              refreshenv
+              $env:path = "C:\Program Files\Tesseract-OCR;C:\Program Files\gs\gs9.50\bin;" + $env:path
+              $env:pathext += ';.py'
+              # -n auto helps Windows
+              pytest -n auto --junitxml=test.xml --cov=ocrmypdf --cov-report=xml
+            displayName: "Test"
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFiles: "test.xml"
+              testRunTitle: "$(Agent.OS) - $(Build.DefinitionName) - Python $(python.version)"
+            condition: succeededOrFailed()
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.xml"
+      - job: "Ubuntu_1804"
+        pool:
+          vmImage: "ubuntu-18.04"
+        strategy:
+          matrix:
+            Python36:
+              python.version: "3.6"
+            Python37:
+              python.version: "3.7"
+            Python38:
+              python.version: "3.8"
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "$(python.version)"
+          - bash: |
+              sudo apt-get update
+              sudo apt-get install -y --no-install-recommends \
+                python3-software-properties \
+                curl \
+                ghostscript \
+                img2pdf \
+                libexempi3 \
+                libffi-dev \
+                liblept5 \
+                libsm6 libxext6 libxrender-dev \
+                pngquant \
+                poppler-utils \
+                python3 \
+                qpdf \
+                tesseract-ocr \
+                tesseract-ocr-deu \
+                tesseract-ocr-eng \
+                unpaper \
+                zlib1g
+            displayName: "Install system packages"
+          - bash: |
+              curl https://bootstrap.pypa.io/get-pip.py | python3
+              pip3 install -r requirements/main.txt -r requirements/test.txt .
+            displayName: "Install Python packages"
+          - bash: |
+              tesseract --version
+              qpdf --version
+            displayName: "Record versions"
+          - bash: |
+              # -n auto is slower on Linux and breaks on Python 3.8
+              pytest -n0 --junitxml=test.xml --cov=ocrmypdf --cov-report=xml
+            displayName: "Test"
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFiles: "test.xml"
+              testRunTitle: "$(Agent.OS) - $(Build.DefinitionName) - Python $(python.version)"
+            condition: succeededOrFailed()
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.xml"
       - job: "Ubuntu_1604"
         pool:
           vmImage: "ubuntu-16.04"
@@ -123,10 +121,10 @@ stages:
           matrix:
             Python36:
               python.version: "3.6"
-            # Python37:
-            #   python.version: "3.7"
-            # Python38:
-            #   python.version: "3.8"
+            Python37:
+              python.version: "3.7"
+            Python38:
+              python.version: "3.8"
         steps:
           - task: UsePythonVersion@0
             inputs:
@@ -174,4 +172,50 @@ stages:
             inputs:
               codeCoverageTool: Cobertura
               summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.xml"
-              reportDirectory: "$(System.DefaultWorkingDirectory)/**/htmlcov"
+      - job: "macOS Mojave"
+        pool:
+          vmImage: "macos-10.14"
+        strategy:
+          matrix:
+            Python36:
+              python.version: "3.6"
+            Python37:
+              python.version: "3.7"
+            Python38:
+              python.version: "3.8"
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "$(python.version)"
+          - bash: |
+              brew update
+              brew install \
+                exempi \
+                ghostscript \
+                jbig2enc \
+                leptonica \
+                openjpeg \
+                pngquant \
+                qpdf \
+                tesseract \
+                unpaper
+            displayName: "Install system packages"
+          - bash: |
+              pip3 install --upgrade pip
+              pip3 install -r requirements/main.txt -r requirements/test.txt .
+            displayName: "Install Python packages"
+          - bash: |
+              tesseract --version
+              qpdf --version
+            displayName: "Record versions"
+          - bash: pytest -nauto --junitxml=test.xml --cov=ocrmypdf --cov-report=xml
+            displayName: "Test"
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFiles: "test.xml"
+              testRunTitle: "$(Agent.OS) - $(Build.DefinitionName) - Python $(python.version)"
+            condition: succeededOrFailed()
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.xml"
