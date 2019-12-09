@@ -794,7 +794,7 @@ def test_compression_changed(
 def test_sidecar_pagecount(spoof_tesseract_cache, resources, outpdf):
     sidecar = outpdf.with_suffix('.txt')
     check_ocrmypdf(
-        resources / 'multipage.pdf',
+        resources / '3small.pdf',
         outpdf,
         '--skip-text',
         '--sidecar',
@@ -802,7 +802,7 @@ def test_sidecar_pagecount(spoof_tesseract_cache, resources, outpdf):
         env=spoof_tesseract_cache,
     )
 
-    pdfinfo = PdfInfo(resources / 'multipage.pdf')
+    pdfinfo = PdfInfo(resources / '3small.pdf')
     num_pages = len(pdfinfo)
 
     with open(sidecar, 'r', encoding='utf-8') as f:
