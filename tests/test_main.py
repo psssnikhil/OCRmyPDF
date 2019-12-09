@@ -573,7 +573,12 @@ language_model_penalty_non_freq_dict_word 0
         )
 
     check_ocrmypdf(
-        resources / 'ccitt.pdf', outdir / 'out.pdf', '--tesseract-config', cfg_file
+        resources / '3small.pdf',
+        outdir / 'out.pdf',
+        '--tesseract-config',
+        cfg_file,
+        '--pages',
+        '1',
     )
 
 
