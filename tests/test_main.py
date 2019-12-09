@@ -640,7 +640,7 @@ def test_pagesize_consistency(renderer, resources, outpdf):
 
     first_page_dimensions = pytest.helpers.first_page_dimensions
 
-    infile = resources / 'linn.pdf'
+    infile = resources / '3small.pdf'
 
     before_dims = first_page_dimensions(infile)
 
@@ -653,12 +653,14 @@ def test_pagesize_consistency(renderer, resources, outpdf):
         '--deskew',
         '--remove-background',
         '--clean-final' if pytest.helpers.have_unpaper() else None,
+        '--pages',
+        '1',
     )
 
     after_dims = first_page_dimensions(outpdf)
 
-    assert isclose(before_dims[0], after_dims[0])
-    assert isclose(before_dims[1], after_dims[1])
+    assert isclose(before_dims[0], after_dims[0], rel_tol=1e-4)
+    assert isclose(before_dims[1], after_dims[1], rel_tol=1e-4)
 
 
 def test_skip_big_with_no_images(spoof_tesseract_noop, resources, outpdf):
